@@ -1,4 +1,3 @@
-
 export const initialStore = {
   people: [],
   vehicles: [],
@@ -18,16 +17,28 @@ export default function storeReducer(store, action = {}) {
       return { ...store, planets: action.payload };
 
     case "ADD_FAVORITE":
-      if (store.favorites.find(f => f.uid === action.payload.uid)) return store;
+      if (
+        store.favorites.find(
+          (f) => f.uid === action.payload.uid && f.type === action.payload.type
+        )
+      ) {
+        return store;
+      }
       return { ...store, favorites: [...store.favorites, action.payload] };
 
     case "REMOVE_FAVORITE":
       return {
         ...store,
-        favorites: store.favorites.filter(f => f.uid !== action.payload.uid),
+        favorites: store.favorites.filter(
+          (f) => f.uid !== action.payload.uid || f.type !== action.payload.type
+        ),
       };
 
+    case "CLEAR_FAVORITES":
+      return { ...store, favorites: [] };
+
     default:
-      throw new Error("Unknown action type: " + action.type);
+      console.warn(`Unknown action type: ${action.type}`);
+      return store;
   }
 }
